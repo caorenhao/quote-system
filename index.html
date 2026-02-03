@@ -122,62 +122,186 @@
 
         <!-- 管理员设置页面 -->
         <div id="admin-page" class="hidden">
-            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                    <i class="fa fa-cog text-primary mr-2"></i> 管理员设置
-                </h2>
+            <div class="max-w-5xl mx-auto">
+                <!-- 页面标题 -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        <i class="fa fa-cog text-primary mr-2"></i> 管理员设置
+                    </h2>
+                    <p class="text-gray-500 mt-1">设置报价公式、隐藏系数和用户管理</p>
+                </div>
                 
-                <div class="space-y-6">
-                    <!-- 报价公式设置 -->
-                    <div>
-                        <h3 class="text-lg font-medium text-gray-700 mb-3">报价公式设置</h3>
-                        <div class="bg-gray-50 p-4 rounded-md">
-                            <div class="space-y-4">
+                <!-- 报价公式设置卡片 -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="flex items-center mb-4">
+                        <i class="fa fa-calculator text-primary text-xl mr-2"></i>
+                        <h3 class="text-xl font-medium text-gray-800">报价公式设置</h3>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="space-y-2">
+                                <label for="formula-base" class="block text-sm font-medium text-gray-700">基础价格系数</label>
+                                <input type="number" id="formula-base" step="0.01" min="0" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                                <p class="text-sm text-gray-500">基础价格乘以该系数</p>
+                            </div>
+                            <div class="space-y-2">
+                                <label for="formula-fee" class="block text-sm font-medium text-gray-700">固定费用</label>
+                                <input type="number" id="formula-fee" step="0.01" min="0" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                                <p class="text-sm text-gray-500">添加到最终价格的固定费用</p>
+                            </div>
+                            <div class="space-y-2">
+                                <label for="formula-percentage" class="block text-sm font-medium text-gray-700">百分比加成</label>
+                                <input type="number" id="formula-percentage" step="0.01" min="0" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                                <p class="text-sm text-gray-500">基础价格的百分比加成（%）</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 隐藏系数设置卡片 -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="flex items-center mb-4">
+                        <i class="fa fa-eye-slash text-primary text-xl mr-2"></i>
+                        <h3 class="text-xl font-medium text-gray-800">隐藏系数设置</h3>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <div class="max-w-md">
+                            <div class="space-y-2">
+                                <label for="hidden-coefficient" class="block text-sm font-medium text-gray-700">隐藏系数</label>
+                                <input type="number" id="hidden-coefficient" step="0.01" min="0" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                                <p class="text-sm text-gray-500">此系数对使用者不可见，会在计算中自动应用</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 用户管理卡片 -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="flex items-center mb-4">
+                        <i class="fa fa-users text-primary text-xl mr-2"></i>
+                        <h3 class="text-xl font-medium text-gray-800">用户管理</h3>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <!-- 管理员用户列表 -->
+                        <div class="mb-8">
+                            <div class="flex items-center mb-3">
+                                <i class="fa fa-user-circle text-primary mr-2"></i>
+                                <h4 class="font-medium text-gray-700">管理员用户</h4>
+                            </div>
+                            <div id="admin-users-list" class="space-y-2">
+                                <!-- 管理员用户列表将通过JavaScript动态生成 -->
+                            </div>
+                        </div>
+                        
+                        <!-- 使用者用户列表 -->
+                        <div class="mb-8">
+                            <div class="flex items-center mb-3">
+                                <i class="fa fa-user text-primary mr-2"></i>
+                                <h4 class="font-medium text-gray-700">使用者用户</h4>
+                            </div>
+                            <div id="user-users-list" class="space-y-2">
+                                <!-- 使用者用户列表将通过JavaScript动态生成 -->
+                            </div>
+                        </div>
+                        
+                        <!-- 添加新用户 -->
+                        <div class="mb-8">
+                            <div class="flex items-center mb-3">
+                                <i class="fa fa-plus-circle text-primary mr-2"></i>
+                                <h4 class="font-medium text-gray-700">添加新用户</h4>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <label for="formula-base" class="block text-sm font-medium text-gray-700">基础价格系数</label>
-                                    <input type="number" id="formula-base" step="0.01" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
-                                    <p class="mt-1 text-sm text-gray-500">基础价格乘以该系数</p>
+                                    <label class="block text-sm font-medium text-gray-700">角色</label>
+                                    <select id="new-user-role" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                                        <option value="admin">管理员</option>
+                                        <option value="user">使用者</option>
+                                    </select>
                                 </div>
                                 <div>
-                                    <label for="formula-fee" class="block text-sm font-medium text-gray-700">固定费用</label>
-                                    <input type="number" id="formula-fee" step="0.01" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
-                                    <p class="mt-1 text-sm text-gray-500">添加到最终价格的固定费用</p>
+                                    <label for="new-user-username" class="block text-sm font-medium text-gray-700">用户名</label>
+                                    <input type="text" id="new-user-username" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
                                 </div>
                                 <div>
-                                    <label for="formula-percentage" class="block text-sm font-medium text-gray-700">百分比加成</label>
-                                    <input type="number" id="formula-percentage" step="0.01" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
-                                    <p class="mt-1 text-sm text-gray-500">基础价格的百分比加成（%）</p>
+                                    <label for="new-user-password" class="block text-sm font-medium text-gray-700">密码</label>
+                                    <input type="password" id="new-user-password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <button id="add-user-button" class="px-6 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition-colors">
+                                    <i class="fa fa-plus mr-1"></i> 添加用户
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 修改用户密码 -->
+                        <div>
+                            <div class="flex items-center mb-3">
+                                <i class="fa fa-key text-primary mr-2"></i>
+                                <h4 class="font-medium text-gray-700">修改用户密码</h4>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">角色</label>
+                                    <select id="update-user-role" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                                        <option value="admin">管理员</option>
+                                        <option value="user">使用者</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="update-user-username" class="block text-sm font-medium text-gray-700">用户名</label>
+                                    <input type="text" id="update-user-username" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                                </div>
+                                <div>
+                                    <label for="update-user-password" class="block text-sm font-medium text-gray-700">新密码</label>
+                                    <input type="password" id="update-user-password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                                </div>
+                                <div class="flex items-end">
+                                    <button id="update-password-button" class="w-full px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition-colors">
+                                        <i class="fa fa-refresh mr-1"></i> 修改密码
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- 隐藏系数设置 -->
-                    <div>
-                        <h3 class="text-lg font-medium text-gray-700 mb-3">隐藏系数设置</h3>
-                        <div class="bg-gray-50 p-4 rounded-md">
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="hidden-coefficient" class="block text-sm font-medium text-gray-700">隐藏系数</label>
-                                    <input type="number" id="hidden-coefficient" step="0.01" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
-                                    <p class="mt-1 text-sm text-gray-500">此系数对使用者不可见，会在计算中自动应用</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 保存按钮 -->
+                </div>
+                
+                <!-- 操作按钮卡片 -->
+                <div class="bg-white rounded-lg shadow-md p-6">
                     <div class="flex justify-end">
-                        <button id="save-settings" class="px-6 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition-colors">
-                            <i class="fa fa-save mr-1"></i> 保存设置
+                        <button id="save-settings" class="px-8 py-3 bg-primary text-white rounded-md hover:bg-blue-600 transition-colors text-lg font-medium">
+                            <i class="fa fa-save mr-2"></i> 保存设置
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- 待登录页面 -->
+        <div id="login-page">
+            <div class="max-w-md mx-auto">
+                <div class="bg-white rounded-lg shadow-md p-8 text-center">
+                    <div class="mb-6">
+                        <i class="fa fa-calculator text-primary text-5xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">报价系统</h2>
+                    <p class="text-gray-500 mb-8">请登录以使用完整功能</p>
+                    
+                    <div class="space-y-4">
+                        <button id="login-page-button" class="w-full py-3 bg-primary text-white rounded-md hover:bg-blue-600 transition-colors text-lg font-medium">
+                            <i class="fa fa-sign-in mr-1"></i> 登录系统
+                        </button>
+                        
+                        <div class="mt-6">
+                            <p class="text-sm text-gray-500">请登录后使用计算功能</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 使用者报价计算页面 -->
-        <div id="calculator-page">
+        <div id="calculator-page" class="hidden">
             <div class="max-w-md mx-auto">
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
@@ -207,13 +331,6 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="mt-8 text-center text-sm text-gray-500">
-                    <p>需要登录以使用更多功能</p>
-                    <button id="calculator-login-button" class="mt-2 text-primary hover:text-blue-600">
-                        <i class="fa fa-sign-in mr-1"></i> 登录
-                    </button>
-                </div>
             </div>
         </div>
     </main>
@@ -223,7 +340,7 @@
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center">
                 <div class="text-sm text-gray-500">
-                    &copy; 2024 报价系统
+                    &copy; 2026 报价系统
                 </div>
                 <div class="flex space-x-4">
                     <a href="#" class="text-gray-400 hover:text-gray-500">
@@ -263,6 +380,44 @@
             },
             clearUser() {
                 localStorage.removeItem('quote-user');
+            },
+            // 用户管理相关方法
+            getUsers() {
+                const users = localStorage.getItem('quote-users');
+                return users ? JSON.parse(users) : {
+                    admin: [{ username: 'admin', password: 'password' }],
+                    user: [{ username: 'user', password: 'password' }]
+                };
+            },
+            saveUsers(users) {
+                localStorage.setItem('quote-users', JSON.stringify(users));
+            },
+            addUser(role, username, password) {
+                const users = this.getUsers();
+                if (!users[role]) {
+                    users[role] = [];
+                }
+                users[role].push({ username, password });
+                this.saveUsers(users);
+            },
+            updateUserPassword(role, username, newPassword) {
+                const users = this.getUsers();
+                if (users[role]) {
+                    const userIndex = users[role].findIndex(user => user.username === username);
+                    if (userIndex !== -1) {
+                        users[role][userIndex].password = newPassword;
+                        this.saveUsers(users);
+                        return true;
+                    }
+                }
+                return false;
+            },
+            getUserByUsername(role, username) {
+                const users = this.getUsers();
+                if (users[role]) {
+                    return users[role].find(user => user.username === username);
+                }
+                return null;
             }
         };
 
@@ -271,7 +426,6 @@
             // 登录相关
             loginModal: document.getElementById('login-modal'),
             loginButton: document.getElementById('login-button'),
-            calculatorLoginButton: document.getElementById('calculator-login-button'),
             closeLoginModal: document.getElementById('close-login-modal'),
             submitLogin: document.getElementById('submit-login'),
             loginUsername: document.getElementById('login-username'),
@@ -290,12 +444,28 @@
             
             // 管理员页面
             adminPage: document.getElementById('admin-page'),
+            loginPage: document.getElementById('login-page'),
             calculatorPage: document.getElementById('calculator-page'),
             formulaBase: document.getElementById('formula-base'),
             formulaFee: document.getElementById('formula-fee'),
             formulaPercentage: document.getElementById('formula-percentage'),
             hiddenCoefficient: document.getElementById('hidden-coefficient'),
             saveSettings: document.getElementById('save-settings'),
+            
+            // 用户管理相关元素
+            adminUsersList: document.getElementById('admin-users-list'),
+            userUsersList: document.getElementById('user-users-list'),
+            newUserRole: document.getElementById('new-user-role'),
+            newUserUsername: document.getElementById('new-user-username'),
+            newUserPassword: document.getElementById('new-user-password'),
+            addUserButton: document.getElementById('add-user-button'),
+            updateUserRole: document.getElementById('update-user-role'),
+            updateUserUsername: document.getElementById('update-user-username'),
+            updateUserPassword: document.getElementById('update-user-password'),
+            updatePasswordButton: document.getElementById('update-password-button'),
+            
+            // 待登录页面元素
+            loginPageButton: document.getElementById('login-page-button'),
             
             // 计算器页面
             inputPrice: document.getElementById('input-price'),
@@ -312,6 +482,9 @@
             
             // 检查用户登录状态
             checkLoginStatus();
+            
+            // 保护计算页面
+            protectCalculatorPage();
             
             // 绑定事件监听器
             bindEventListeners();
@@ -340,11 +513,30 @@
                 } else {
                     elements.adminLink.classList.add('hidden');
                 }
+                
+                // 登录后默认进入报价计算页面
+                elements.loginPage.classList.add('hidden');
+                elements.adminPage.classList.add('hidden');
+                elements.calculatorPage.classList.remove('hidden');
             } else {
                 // 用户未登录
                 elements.authButtons.classList.remove('hidden');
                 elements.userMenu.classList.add('hidden');
                 elements.adminLink.classList.add('hidden');
+                
+                // 未登录时显示待登录页面，禁止访问计算页面
+                elements.loginPage.classList.remove('hidden');
+                elements.adminPage.classList.add('hidden');
+                elements.calculatorPage.classList.add('hidden');
+            }
+        }
+        
+        // 保护计算页面，确保只有登录用户可以访问
+        function protectCalculatorPage() {
+            const user = storage.getUser();
+            if (!user) {
+                elements.loginPage.classList.remove('hidden');
+                elements.calculatorPage.classList.add('hidden');
             }
         }
 
@@ -355,7 +547,8 @@
                 elements.loginModal.classList.remove('hidden');
             });
             
-            elements.calculatorLoginButton.addEventListener('click', () => {
+            // 待登录页面按钮点击
+            elements.loginPageButton.addEventListener('click', () => {
                 elements.loginModal.classList.remove('hidden');
             });
             
@@ -378,13 +571,10 @@
                 const role = document.querySelector('input[name="role"]:checked').value;
                 
                 // 账号密码验证
-                const validAccounts = {
-                    admin: { username: 'admin', password: 'password' },
-                    user: { username: 'user', password: 'password' }
-                };
+                const users = storage.getUsers();
+                const validUser = users[role]?.find(user => user.username === username && user.password === password);
                 
-                const validAccount = validAccounts[role];
-                if (username === validAccount.username && password === validAccount.password) {
+                if (validUser) {
                     storage.saveUser(role);
                     elements.loginModal.classList.add('hidden');
                     checkLoginStatus();
@@ -450,6 +640,111 @@
                 
                 // 显示保存成功提示
                 alert('设置保存成功！');
+            });
+            
+            // 显示用户列表
+            function displayUsers() {
+                const users = storage.getUsers();
+                
+                // 显示管理员用户列表
+                elements.adminUsersList.innerHTML = '';
+                if (users.admin && users.admin.length > 0) {
+                    users.admin.forEach(user => {
+                        const userItem = document.createElement('div');
+                        userItem.className = 'flex justify-between items-center bg-white p-2 rounded border border-gray-200';
+                        userItem.innerHTML = `
+                            <span>${user.username}</span>
+                            <span class="text-gray-500 text-sm">管理员</span>
+                        `;
+                        elements.adminUsersList.appendChild(userItem);
+                    });
+                } else {
+                    elements.adminUsersList.innerHTML = '<div class="text-gray-500 text-sm">暂无管理员用户</div>';
+                }
+                
+                // 显示使用者用户列表
+                elements.userUsersList.innerHTML = '';
+                if (users.user && users.user.length > 0) {
+                    users.user.forEach(user => {
+                        const userItem = document.createElement('div');
+                        userItem.className = 'flex justify-between items-center bg-white p-2 rounded border border-gray-200';
+                        userItem.innerHTML = `
+                            <span>${user.username}</span>
+                            <span class="text-gray-500 text-sm">使用者</span>
+                        `;
+                        elements.userUsersList.appendChild(userItem);
+                    });
+                } else {
+                    elements.userUsersList.innerHTML = '<div class="text-gray-500 text-sm">暂无使用者用户</div>';
+                }
+            }
+            
+            // 添加新用户
+            elements.addUserButton.addEventListener('click', () => {
+                const role = elements.newUserRole.value;
+                const username = elements.newUserUsername.value;
+                const password = elements.newUserPassword.value;
+                
+                if (!username || !password) {
+                    alert('请填写完整的用户信息');
+                    return;
+                }
+                
+                // 检查用户名是否已存在
+                const users = storage.getUsers();
+                if (users[role] && users[role].some(user => user.username === username)) {
+                    alert('该用户名已存在，请使用其他用户名');
+                    return;
+                }
+                
+                storage.addUser(role, username, password);
+                
+                // 重置表单
+                elements.newUserUsername.value = '';
+                elements.newUserPassword.value = '';
+                
+                // 更新用户列表
+                displayUsers();
+                
+                alert('用户添加成功！');
+            });
+            
+            // 修改用户密码
+            elements.updatePasswordButton.addEventListener('click', () => {
+                const role = elements.updateUserRole.value;
+                const username = elements.updateUserUsername.value;
+                const newPassword = elements.updateUserPassword.value;
+                
+                if (!username || !newPassword) {
+                    alert('请填写完整的用户信息');
+                    return;
+                }
+                
+                // 检查用户是否存在
+                const users = storage.getUsers();
+                if (!users[role] || !users[role].some(user => user.username === username)) {
+                    alert('该用户不存在，请检查输入');
+                    return;
+                }
+                
+                storage.updateUserPassword(role, username, newPassword);
+                
+                // 重置表单
+                elements.updateUserUsername.value = '';
+                elements.updateUserPassword.value = '';
+                
+                alert('密码修改成功！');
+            });
+            
+            // 管理员链接点击时显示用户列表
+            elements.adminLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                elements.adminPage.classList.remove('hidden');
+                elements.calculatorPage.classList.add('hidden');
+                elements.userDropdown.classList.add('hidden');
+                
+                // 显示用户列表
+                displayUsers();
             });
             
             // 计算按钮
