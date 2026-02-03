@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>报价系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#10b981',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bg-gradient-primary {
+                background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            }
+            .card-shadow {
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fa fa-calculator text-primary text-2xl mr-2"></i>
+                        <span class="font-bold text-xl text-gray-800">报价系统</span>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div id="auth-buttons" class="hidden md:block">
+                        <button id="login-button" class="ml-4 px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition-colors">
+                            <i class="fa fa-sign-in mr-1"></i> 登录
+                        </button>
+                    </div>
+                    <div id="user-menu" class="hidden md:block ml-4">
+                        <div class="relative">
+                            <button id="user-dropdown-button" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none">
+                                <span id="user-name">用户</span>
+                                <i class="fa fa-chevron-down ml-1 text-xs"></i>
+                            </button>
+                            <div id="user-dropdown" class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-1 z-10">
+                                <a href="#" id="admin-link" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fa fa-cog mr-1"></i> 管理员设置
+                                </a>
+                                <a href="#" id="calculator-link" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fa fa-calculator mr-1"></i> 报价计算
+                                </a>
+                                <a href="#" id="logout-button" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fa fa-sign-out mr-1"></i> 退出登录
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 登录模态框 -->
+        <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">用户登录</h3>
+                    <button id="close-login-modal" class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label for="login-username" class="block text-sm font-medium text-gray-700">用户名</label>
+                        <input type="text" id="login-username" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                    </div>
+                    <div>
+                        <label for="login-password" class="block text-sm font-medium text-gray-700">密码</label>
+                        <input type="password" id="login-password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">角色</label>
+                        <div class="mt-1">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="role" value="admin" class="form-radio text-primary" checked>
+                                <span class="ml-2">管理员</span>
+                            </label>
+                            <label class="inline-flex items-center ml-6">
+                                <input type="radio" name="role" value="user" class="form-radio text-primary">
+                                <span class="ml-2">使用者</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <button id="submit-login" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                            登录
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 管理员设置页面 -->
+        <div id="admin-page" class="hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                    <i class="fa fa-cog text-primary mr-2"></i> 管理员设置
+                </h2>
+                
+                <div class="space-y-6">
+                    <!-- 报价公式设置 -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-700 mb-3">报价公式设置</h3>
+                        <div class="bg-gray-50 p-4 rounded-md">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="formula-base" class="block text-sm font-medium text-gray-700">基础价格系数</label>
+                                    <input type="number" id="formula-base" step="0.01" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                                    <p class="mt-1 text-sm text-gray-500">基础价格乘以该系数</p>
+                                </div>
+                                <div>
+                                    <label for="formula-fee" class="block text-sm font-medium text-gray-700">固定费用</label>
+                                    <input type="number" id="formula-fee" step="0.01" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                                    <p class="mt-1 text-sm text-gray-500">添加到最终价格的固定费用</p>
+                                </div>
+                                <div>
+                                    <label for="formula-percentage" class="block text-sm font-medium text-gray-700">百分比加成</label>
+                                    <input type="number" id="formula-percentage" step="0.01" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                                    <p class="mt-1 text-sm text-gray-500">基础价格的百分比加成（%）</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 隐藏系数设置 -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-700 mb-3">隐藏系数设置</h3>
+                        <div class="bg-gray-50 p-4 rounded-md">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="hidden-coefficient" class="block text-sm font-medium text-gray-700">隐藏系数</label>
+                                    <input type="number" id="hidden-coefficient" step="0.01" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+                                    <p class="mt-1 text-sm text-gray-500">此系数对使用者不可见，会在计算中自动应用</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 保存按钮 -->
+                    <div class="flex justify-end">
+                        <button id="save-settings" class="px-6 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition-colors">
+                            <i class="fa fa-save mr-1"></i> 保存设置
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用者报价计算页面 -->
+        <div id="calculator-page">
+            <div class="max-w-md mx-auto">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                        <i class="fa fa-calculator text-primary mr-2"></i> 报价计算
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label for="input-price" class="block text-sm font-medium text-gray-700">输入价格</label>
+                            <input type="number" id="input-price" step="0.01" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary text-lg">
+                        </div>
+                        
+                        <div class="pt-4">
+                            <button id="calculate-button" class="w-full py-3 bg-primary text-white rounded-md hover:bg-blue-600 transition-colors text-lg font-medium">
+                                <i class="fa fa-calculator mr-1"></i> 计算报价
+                            </button>
+                        </div>
+                        
+                        <div id="result-section" class="hidden pt-4 border-t border-gray-200">
+                            <h3 class="text-lg font-medium text-gray-700 mb-2">计算结果</h3>
+                            <div class="bg-gray-50 p-4 rounded-md">
+                                <p class="text-sm text-gray-500">基础价格</p>
+                                <p id="result-base" class="text-lg font-semibold text-gray-800">¥0.00</p>
+                                <p class="text-sm text-gray-500 mt-2">最终报价</p>
+                                <p id="result-final" class="text-xl font-bold text-primary">¥0.00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-center text-sm text-gray-500">
+                    <p>需要登录以使用更多功能</p>
+                    <button id="calculator-login-button" class="mt-2 text-primary hover:text-blue-600">
+                        <i class="fa fa-sign-in mr-1"></i> 登录
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <div class="text-sm text-gray-500">
+                    &copy; 2024 报价系统
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-gray-500">
+                        <i class="fa fa-question-circle"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-gray-500">
+                        <i class="fa fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 存储设置和用户信息
+        const storage = {
+            getSettings() {
+                const settings = localStorage.getItem('quote-settings');
+                return settings ? JSON.parse(settings) : {
+                    formula: {
+                        base: 1.0,
+                        fee: 0,
+                        percentage: 0
+                    },
+                    hiddenCoefficient: 1.0
+                };
+            },
+            saveSettings(settings) {
+                localStorage.setItem('quote-settings', JSON.stringify(settings));
+            },
+            getUser() {
+                return localStorage.getItem('quote-user');
+            },
+            saveUser(user) {
+                localStorage.setItem('quote-user', user);
+            },
+            clearUser() {
+                localStorage.removeItem('quote-user');
+            }
+        };
+
+        // 页面元素
+        const elements = {
+            // 登录相关
+            loginModal: document.getElementById('login-modal'),
+            loginButton: document.getElementById('login-button'),
+            calculatorLoginButton: document.getElementById('calculator-login-button'),
+            closeLoginModal: document.getElementById('close-login-modal'),
+            submitLogin: document.getElementById('submit-login'),
+            loginUsername: document.getElementById('login-username'),
+            loginPassword: document.getElementById('login-password'),
+            roleRadios: document.querySelectorAll('input[name="role"]'),
+            
+            // 用户菜单
+            authButtons: document.getElementById('auth-buttons'),
+            userMenu: document.getElementById('user-menu'),
+            userName: document.getElementById('user-name'),
+            userDropdownButton: document.getElementById('user-dropdown-button'),
+            userDropdown: document.getElementById('user-dropdown'),
+            adminLink: document.getElementById('admin-link'),
+            calculatorLink: document.getElementById('calculator-link'),
+            logoutButton: document.getElementById('logout-button'),
+            
+            // 管理员页面
+            adminPage: document.getElementById('admin-page'),
+            calculatorPage: document.getElementById('calculator-page'),
+            formulaBase: document.getElementById('formula-base'),
+            formulaFee: document.getElementById('formula-fee'),
+            formulaPercentage: document.getElementById('formula-percentage'),
+            hiddenCoefficient: document.getElementById('hidden-coefficient'),
+            saveSettings: document.getElementById('save-settings'),
+            
+            // 计算器页面
+            inputPrice: document.getElementById('input-price'),
+            calculateButton: document.getElementById('calculate-button'),
+            resultSection: document.getElementById('result-section'),
+            resultBase: document.getElementById('result-base'),
+            resultFinal: document.getElementById('result-final')
+        };
+
+        // 初始化页面
+        function init() {
+            // 加载设置到表单
+            loadSettingsToForm();
+            
+            // 检查用户登录状态
+            checkLoginStatus();
+            
+            // 绑定事件监听器
+            bindEventListeners();
+        }
+
+        // 加载设置到表单
+        function loadSettingsToForm() {
+            const settings = storage.getSettings();
+            elements.formulaBase.value = settings.formula.base;
+            elements.formulaFee.value = settings.formula.fee;
+            elements.formulaPercentage.value = settings.formula.percentage;
+            elements.hiddenCoefficient.value = settings.hiddenCoefficient;
+        }
+
+        // 检查登录状态
+        function checkLoginStatus() {
+            const user = storage.getUser();
+            if (user) {
+                // 用户已登录
+                elements.authButtons.classList.add('hidden');
+                elements.userMenu.classList.remove('hidden');
+                elements.userName.textContent = user === 'admin' ? '管理员' : '使用者';
+                
+                if (user === 'admin') {
+                    elements.adminLink.classList.remove('hidden');
+                } else {
+                    elements.adminLink.classList.add('hidden');
+                }
+            } else {
+                // 用户未登录
+                elements.authButtons.classList.remove('hidden');
+                elements.userMenu.classList.add('hidden');
+                elements.adminLink.classList.add('hidden');
+            }
+        }
+
+        // 绑定事件监听器
+        function bindEventListeners() {
+            // 登录按钮点击
+            elements.loginButton.addEventListener('click', () => {
+                elements.loginModal.classList.remove('hidden');
+            });
+            
+            elements.calculatorLoginButton.addEventListener('click', () => {
+                elements.loginModal.classList.remove('hidden');
+            });
+            
+            // 关闭登录模态框
+            elements.closeLoginModal.addEventListener('click', () => {
+                elements.loginModal.classList.add('hidden');
+            });
+            
+            // 点击模态框外部关闭
+            elements.loginModal.addEventListener('click', (e) => {
+                if (e.target === elements.loginModal) {
+                    elements.loginModal.classList.add('hidden');
+                }
+            });
+            
+            // 提交登录
+            elements.submitLogin.addEventListener('click', () => {
+                const username = elements.loginUsername.value;
+                const password = elements.loginPassword.value;
+                const role = document.querySelector('input[name="role"]:checked').value;
+                
+                // 账号密码验证
+                const validAccounts = {
+                    admin: { username: 'admin', password: 'password' },
+                    user: { username: 'user', password: 'password' }
+                };
+                
+                const validAccount = validAccounts[role];
+                if (username === validAccount.username && password === validAccount.password) {
+                    storage.saveUser(role);
+                    elements.loginModal.classList.add('hidden');
+                    checkLoginStatus();
+                    
+                    // 重置表单
+                    elements.loginUsername.value = '';
+                    elements.loginPassword.value = '';
+                } else {
+                    alert('账号或密码错误，请检查后重试');
+                }
+            });
+            
+            // 用户下拉菜单
+            elements.userDropdownButton.addEventListener('click', () => {
+                elements.userDropdown.classList.toggle('hidden');
+            });
+            
+            // 点击外部关闭下拉菜单
+            document.addEventListener('click', (e) => {
+                if (!elements.userMenu.contains(e.target)) {
+                    elements.userDropdown.classList.add('hidden');
+                }
+            });
+            
+            // 管理员链接
+            elements.adminLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                elements.adminPage.classList.remove('hidden');
+                elements.calculatorPage.classList.add('hidden');
+                elements.userDropdown.classList.add('hidden');
+            });
+            
+            // 计算器链接
+            elements.calculatorLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                elements.adminPage.classList.add('hidden');
+                elements.calculatorPage.classList.remove('hidden');
+                elements.userDropdown.classList.add('hidden');
+            });
+            
+            // 退出登录
+            elements.logoutButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                storage.clearUser();
+                checkLoginStatus();
+                elements.userDropdown.classList.add('hidden');
+                elements.adminPage.classList.add('hidden');
+                elements.calculatorPage.classList.remove('hidden');
+            });
+            
+            // 保存设置
+            elements.saveSettings.addEventListener('click', () => {
+                const settings = {
+                    formula: {
+                        base: parseFloat(elements.formulaBase.value) || 1.0,
+                        fee: parseFloat(elements.formulaFee.value) || 0,
+                        percentage: parseFloat(elements.formulaPercentage.value) || 0
+                    },
+                    hiddenCoefficient: parseFloat(elements.hiddenCoefficient.value) || 1.0
+                };
+                
+                storage.saveSettings(settings);
+                
+                // 显示保存成功提示
+                alert('设置保存成功！');
+            });
+            
+            // 计算按钮
+            elements.calculateButton.addEventListener('click', () => {
+                const inputPrice = parseFloat(elements.inputPrice.value) || 0;
+                if (inputPrice > 0) {
+                    calculateQuote(inputPrice);
+                } else {
+                    alert('请输入有效的价格');
+                }
+            });
+        }
+
+        // 计算报价
+        function calculateQuote(inputPrice) {
+            const settings = storage.getSettings();
+            
+            // 计算逻辑
+            // 公式：(输入价格 * 基础价格系数 * (1 + 百分比加成/100) + 固定费用) * 隐藏系数
+            const basePrice = inputPrice;
+            const calculatedPrice = (
+                inputPrice * settings.formula.base * (1 + settings.formula.percentage / 100) + 
+                settings.formula.fee
+            ) * settings.hiddenCoefficient;
+            
+            // 显示结果
+            elements.resultBase.textContent = `¥${basePrice.toFixed(2)}`;
+            elements.resultFinal.textContent = `¥${calculatedPrice.toFixed(2)}`;
+            elements.resultSection.classList.remove('hidden');
+        }
+
+        // 初始化应用
+        init();
+    </script>
+</body>
+</html>
