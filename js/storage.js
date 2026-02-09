@@ -45,7 +45,29 @@ const storage = {
      * @returns {string|null} 用户角色 ('admin' 或 'user') 或 null
      */
     getUser() {
-        return localStorage.getItem('quote-user');
+        const userData = localStorage.getItem('quote-user');
+        if (!userData) return null;
+
+        try {
+            const parsedData = JSON.parse(userData);
+            
+            // 兼容旧的字符串存储格式
+            if (typeof parsedData === 'string') {
+                return parsedData;
+            }
+
+            // 检查过期时间 (1小时 = 60 * 60 * 1000 毫秒)
+            const ONE_HOUR = 60 * 60 * 1000;
+            if (Date.now() - parsedData.timestamp > ONE_HOUR) {
+                this.clearUser();
+                return null;
+            }
+
+            return parsedData.role;
+        } catch (e) {
+            // 如果解析失败，可能是旧格式的纯字符串
+            return userData;
+        }
     },
 
     /**
@@ -53,7 +75,11 @@ const storage = {
      * @param {string} role 用户角色
      */
     saveUser(role) {
-        localStorage.setItem('quote-user', role);
+        const data = {
+            role: role,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('quote-user', JSON.stringify(data));
     },
 
     /**
